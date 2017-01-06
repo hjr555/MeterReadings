@@ -5,7 +5,7 @@ using System.Linq;
 using MeterReadings.Models;
 using Newtonsoft.Json;
 
-namespace ConsoleApplication8
+namespace MeterReadings
 {
     class Program
     {
