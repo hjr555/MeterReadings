@@ -2,17 +2,11 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using MeterReadings.Models;
 using Newtonsoft.Json;
 
 namespace ConsoleApplication8
 {
-    public class Reading
-    {
-        public DateTime Date { get; set; }
-        public int Day { get; set; }
-        public int Night { get; set; }
-    }
-
     class Program
     {
         static void Main(string[] args)
