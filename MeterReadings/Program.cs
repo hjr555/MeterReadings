@@ -19,16 +19,7 @@ namespace ConsoleApplication8
         {
             var datapath = @"Data\readings.json";
 
-            var engineers = new Dictionary<string, int>();
-            IEnumerable<Reading> data;
-
-            using (var r = new StreamReader(datapath))
-            {
-                var json = r.ReadToEnd();
-
-                data = JsonConvert.DeserializeObject<List<Reading>>(json)
-                    .OrderByDescending(x => x.Date);
-            }
+            var data = GetReadings(datapath);
 
             Console.WriteLine($"Total readings: { data.Count() }");
             Console.WriteLine();
@@ -38,5 +29,31 @@ namespace ConsoleApplication8
                 Console.WriteLine($"Date: { reading.Date.ToShortDateString() }\t Day: { reading.Day }\t Night: { reading.Night }");
             }
         }
+
+        private static IEnumerable<Reading> GetReadings(string path)
+        {
+            IEnumerable<Reading> data = default(IEnumerable<Reading>);
+
+            var json = LoadJSON(path);
+            data = DeserializeJson(json);
+
+            return data;
+        }
+
+        private static string LoadJSON(string path)
+        {
+            string json = string.Empty;
+
+            if (File.Exists(path))
+            {
+                using (var reader = new StreamReader(path))
+                {
+                    json = reader.ReadToEnd();
+                }
+            }
+
+            return json;
+        }
+        private static IEnumerable<Reading> DeserializeJson(string json) => JsonConvert.DeserializeObject<List<Reading>>(json);
     }
 }
