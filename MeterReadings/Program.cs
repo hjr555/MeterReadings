@@ -15,12 +15,45 @@ namespace MeterReadings
 
             var data = GetReadings(datapath);
 
+            DisplayData(data);
+        }
+
+        private static void DisplayData(IEnumerable<Reading> data)
+        {
+            var sorted = data.OrderByDescending(x => x.Date);
+            decimal standingCharge = 21.798M;
+            decimal dayRate = 14.776M;
+            decimal nightRate = 7.706M;
+
             Console.WriteLine($"Total readings: { data.Count() }");
             Console.WriteLine();
 
-            foreach(var reading in data)
+            foreach (var reading in sorted)
             {
-                Console.WriteLine($"Date: { reading.Date.ToShortDateString() }\t Day: { reading.Day }\t Night: { reading.Night }");
+                Reading lastReading = sorted.Where(x => x.Date < reading.Date)?.FirstOrDefault();
+
+                Console.WriteLine();
+
+
+                if (lastReading != null)
+                {
+                    TimeSpan difference = reading.Date - lastReading.Date;
+                    int dayDiff = reading.Day - lastReading.Day;
+                    int nightDiff = reading.Night - lastReading.Night;
+
+                    decimal estimate = 
+                            ((dayDiff * dayRate) + 
+                            (nightDiff * nightRate) + 
+                            (standingCharge * difference.Days)) / 100;
+
+                    Console.WriteLine($"Date: { reading.Date.ToShortDateString() }\t Day: { reading.Day } (Avg { dayDiff / difference.Days })\t Night: { reading.Night }(Avg { nightDiff / difference.Days })");
+                    Console.WriteLine($"Est. Charge: £{ string.Format("{0:0.00}", estimate) }");
+                    Console.WriteLine($"Est. Daily : £{ string.Format("{0:0.00}", estimate / difference.Days) }");
+                }
+                else
+                {
+                    Console.WriteLine($"Date: { reading.Date.ToShortDateString() }\t Day: { reading.Day }\t Night: { reading.Night }");
+                }
             }
         }
 
@@ -33,7 +66,6 @@ namespace MeterReadings
 
             return data;
         }
-
         private static string LoadJSON(string path)
         {
             string json = string.Empty;

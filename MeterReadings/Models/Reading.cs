@@ -7,5 +7,7 @@ namespace MeterReadings.Models
         public DateTime Date { get; set; }
         public int Day { get; set; }
         public int Night { get; set; }
+
+        public override string ToString() => Date.ToShortDateString();
     }
 }
